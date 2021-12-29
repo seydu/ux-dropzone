@@ -18,19 +18,22 @@ class default_1 extends Controller {
         this._dispatchEvent('dropzone:clear');
     }
     onInputChange(event) {
-        const file = event.target.files[0];
-        if (typeof file === 'undefined') {
-            return;
+        const fileList = event.target.files;
+        var htmlString = '';
+        for (let i = 0, numFiles = fileList.length; i < numFiles; i++) {
+            var file = fileList[i];
+            if (typeof file === 'undefined') {
+                continue;
+            }
+            htmlString = htmlString + '<li>'+file.name+'</li>';
+            this._dispatchEvent('dropzone:change', file);
         }
         this.inputTarget.style.display = 'none';
         this.placeholderTarget.style.display = 'none';
-        this.previewFilenameTarget.textContent = file.name;
+        this.previewFilenameTarget.innerHTML = '<ol>'+htmlString+'</ol>';
         this.previewTarget.style.display = 'flex';
         this.previewImageTarget.style.display = 'none';
-        if (file.type && file.type.indexOf('image') !== -1) {
-            this._populateImagePreview(file);
-        }
-        this._dispatchEvent('dropzone:change', file);
+
     }
     _populateImagePreview(file) {
         if (typeof FileReader === 'undefined') {
